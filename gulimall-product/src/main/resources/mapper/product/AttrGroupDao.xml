@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.atguigu.gulimall.product.dao.AttrGroupDao">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.atguigu.gulimall.product.entity.AttrGroupEntity" id="attrGroupMap">
+        <result property="attrGroupId" column="attr_group_id"/>
+        <result property="attrGroupName" column="attr_group_name"/>
+        <result property="sort" column="sort"/>
+        <result property="descript" column="descript"/>
+        <result property="icon" column="icon"/>
+        <result property="catelogId" column="catelog_id"/>
+    </resultMap>
+    <resultMap id="spuItemAttrGroupVo" type="com.atguigu.gulimall.product.vo.SpuItemAttrGroupVo">
+        <result property="groupName" column="attr_group_name"></result>
+        <collection property="attrs" ofType="com.atguigu.gulimall.product.vo.Attr">
+            <result column="attr_name" property="attrName"></result>
+            <result column="attr_value" property="attrValue"></result>
+        </collection>
+    </resultMap>
+    <select id="getAttrGroupWithAttrsBySpuId"
+            resultMap="spuItemAttrGroupVo">
+        SELECT
+        ag.attr_group_id,
+        aar.attr_id,
+        pav.attr_value,
+        pav.spu_id,
+        pav.attr_name,
+        ag.attr_group_name
+        FROM
+        pms_attr_group AS ag
+        LEFT JOIN pms_attr_attrgroup_relation AS aar ON aar.attr_group_id = ag.attr_group_id
+        LEFT JOIN pms_attr AS attr ON attr.attr_id = aar.attr_id
+        LEFT JOIN `pms_product_attr_value` pav ON pav.attr_id=attr.attr_id
+        where ag.catelog_id=#{catalogId} and pav.spu_id=#{spuId}
+
+    </select>
+
+
+</mapper>
